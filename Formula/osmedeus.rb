@@ -10,7 +10,7 @@ class Osmedeus < Formula
   on_macos do
     on_arm do
       url "https://github.com/j3ssie/osmedeus/releases/download/v#{version}/osmedeus_#{version}_darwin_arm64.tar.gz"
-      sha256 "8a8577e1ddc3ab47a60cd52d7c21d722b85e31780c7f6a79205ba8043361788d"
+      sha256 "1dd7a7c4d8bbf5b672306d3ba58d6a20ce2e2bf49c82b05aba458547ccea71f1"
     end
     on_intel do
       url "https://github.com/j3ssie/osmedeus/releases/download/v#{version}/osmedeus_#{version}_darwin_amd64.tar.gz"
