@@ -14,18 +14,18 @@ class Osmedeus < Formula
     end
     on_intel do
       url "https://github.com/j3ssie/osmedeus/releases/download/v#{version}/osmedeus_#{version}_darwin_amd64.tar.gz"
-      sha256 "66f3669842d10832b32dc944529a276281df3a7bf89feaa458366c234ab7536b"
+      sha256 "ce9eba4ca827fc4d5ae2129e1a96cf0634a6c2d9af580e7f58a3825a7d7b79df"
     end
   end
 
   on_linux do
     on_arm do
       url "https://github.com/j3ssie/osmedeus/releases/download/v#{version}/osmedeus_#{version}_linux_arm64.tar.gz"
-      sha256 "096862926d0be6f0177e35480b6475bf8d13ffd9f04d7cc9f3d73d91595bff8b"
+      sha256 "d1e8158356cade661c1d5edc21c5347b810be83c873f5ae86586478f3a9a3866"
     end
     on_intel do
       url "https://github.com/j3ssie/osmedeus/releases/download/v#{version}/osmedeus_#{version}_linux_amd64.tar.gz"
-      sha256 "5c0f0949f7057d24508aec9ca66326e97a59ba4711b2e504899f837609a0bf07"
+      sha256 "759c1e4b7ebbe746d2a274b2f34808f5dc8cae68c4165b395911866fc453e188"
     end
   end
 
