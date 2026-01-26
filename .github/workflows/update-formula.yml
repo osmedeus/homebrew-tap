@@ -1,0 +1,125 @@
+name: Update Formula
+
+on:
+  schedule:
+    # Run daily at 00:00 UTC
+    - cron: '0 0 * * *'
+  workflow_dispatch: # Allow manual trigger
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Fetch latest release and update formula
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -e
+
+          REPO="j3ssie/osmedeus"
+          FORMULA="Formula/osmedeus.rb"
+
+          # Get latest release info
+          echo "Fetching latest release from $REPO..."
+          RELEASE_JSON=$(gh api repos/$REPO/releases/latest)
+
+          VERSION=$(echo "$RELEASE_JSON" | jq -r '.tag_name' | sed 's/^v//')
+          echo "Latest version: $VERSION"
+
+          # Get current version from formula
+          CURRENT_VERSION=$(grep -oP 'version "\K[^"]+' "$FORMULA")
+          echo "Current version: $CURRENT_VERSION"
+
+          if [ "$VERSION" = "$CURRENT_VERSION" ]; then
+            echo "Formula is already up to date"
+            exit 0
+          fi
+
+          echo "Updating formula from $CURRENT_VERSION to $VERSION"
+
+          # Download assets and calculate SHA256
+          ASSETS_URL="https://github.com/$REPO/releases/download/v$VERSION"
+
+          declare -A CHECKSUMS
+
+          for platform in "darwin_arm64" "darwin_amd64" "linux_arm64" "linux_amd64"; do
+            ASSET="osmedeus_${VERSION}_${platform}.tar.gz"
+            echo "Downloading $ASSET..."
+            curl -sL "$ASSETS_URL/$ASSET" -o "/tmp/$ASSET"
+            CHECKSUMS[$platform]=$(sha256sum "/tmp/$ASSET" | cut -d' ' -f1)
+            echo "  SHA256: ${CHECKSUMS[$platform]}"
+            rm "/tmp/$ASSET"
+          done
+
+          # Generate updated formula
+          cat > "$FORMULA" << EOF
+          # typed: false
+          # frozen_string_literal: true
+
+          class Osmedeus < Formula
+            desc "A Modern Orchestration Engine for Security"
+            homepage "https://github.com/$REPO"
+            version "$VERSION"
+            license "MIT"
+
+            on_macos do
+              on_arm do
+                url "https://github.com/$REPO/releases/download/v#{version}/osmedeus_#{version}_darwin_arm64.tar.gz"
+                sha256 "${CHECKSUMS[darwin_arm64]}"
+              end
+              on_intel do
+                url "https://github.com/$REPO/releases/download/v#{version}/osmedeus_#{version}_darwin_amd64.tar.gz"
+                sha256 "${CHECKSUMS[darwin_amd64]}"
+              end
+            end
+
+            on_linux do
+              on_arm do
+                url "https://github.com/$REPO/releases/download/v#{version}/osmedeus_#{version}_linux_arm64.tar.gz"
+                sha256 "${CHECKSUMS[linux_arm64]}"
+              end
+              on_intel do
+                url "https://github.com/$REPO/releases/download/v#{version}/osmedeus_#{version}_linux_amd64.tar.gz"
+                sha256 "${CHECKSUMS[linux_amd64]}"
+              end
+            end
+
+            def install
+              bin.install "osmedeus"
+            end
+
+            test do
+              assert_match "osmedeus", shell_output("#{bin}/osmedeus --help")
+            end
+          end
+          EOF
+
+          # Remove leading whitespace from heredoc
+          sed -i 's/^          //' "$FORMULA"
+
+          echo "Formula updated successfully"
+
+      - name: Check for changes
+        id: changes
+        run: |
+          if git diff --quiet Formula/osmedeus.rb; then
+            echo "changed=false" >> $GITHUB_OUTPUT
+          else
+            echo "changed=true" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Commit and push
+        if: steps.changes.outputs.changed == 'true'
+        run: |
+          VERSION=$(grep -oP 'version "\K[^"]+' Formula/osmedeus.rb)
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add Formula/osmedeus.rb
+          git commit -m "Update osmedeus to v$VERSION"
+          git push
