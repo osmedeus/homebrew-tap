@@ -36,25 +36,30 @@ jobs:
           CURRENT_VERSION=$(grep -oP 'version "\K[^"]+' "$FORMULA")
           echo "Current version: $CURRENT_VERSION"
 
-          if [ "$VERSION" = "$CURRENT_VERSION" ]; then
-            echo "Formula is already up to date"
-            exit 0
+          # Download checksums from release
+          ASSETS_URL="https://github.com/$REPO/releases/download/v$VERSION"
+          echo "Downloading checksums.txt..."
+          CHECKSUMS_FILE=$(curl -sL "$ASSETS_URL/checksums.txt")
+
+          if [ -z "$CHECKSUMS_FILE" ]; then
+            echo "Error: Failed to download checksums.txt"
+            exit 1
           fi
 
-          echo "Updating formula from $CURRENT_VERSION to $VERSION"
+          echo "Checksums from release:"
+          echo "$CHECKSUMS_FILE"
 
-          # Download assets and calculate SHA256
-          ASSETS_URL="https://github.com/$REPO/releases/download/v$VERSION"
-
+          # Parse checksums
           declare -A CHECKSUMS
-
           for platform in "darwin_arm64" "darwin_amd64" "linux_arm64" "linux_amd64"; do
             ASSET="osmedeus_${VERSION}_${platform}.tar.gz"
-            echo "Downloading $ASSET..."
-            curl -sL "$ASSETS_URL/$ASSET" -o "/tmp/$ASSET"
-            CHECKSUMS[$platform]=$(sha256sum "/tmp/$ASSET" | cut -d' ' -f1)
-            echo "  SHA256: ${CHECKSUMS[$platform]}"
-            rm "/tmp/$ASSET"
+            CHECKSUM=$(echo "$CHECKSUMS_FILE" | grep "$ASSET" | cut -d' ' -f1)
+            if [ -z "$CHECKSUM" ]; then
+              echo "Error: Checksum not found for $ASSET"
+              exit 1
+            fi
+            CHECKSUMS[$platform]=$CHECKSUM
+            echo "  $platform: $CHECKSUM"
           done
 
           # Generate updated formula
@@ -121,5 +126,5 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add Formula/osmedeus.rb
-          git commit -m "Update osmedeus to v$VERSION"
+          git commit -m "chore: update osmedeus checksums for all platforms"
           git push

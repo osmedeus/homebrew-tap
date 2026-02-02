@@ -10,22 +10,22 @@ class Osmedeus < Formula
   on_macos do
     on_arm do
       url "https://github.com/j3ssie/osmedeus/releases/download/v#{version}/osmedeus_#{version}_darwin_arm64.tar.gz"
-      sha256 "1dd7a7c4d8bbf5b672306d3ba58d6a20ce2e2bf49c82b05aba458547ccea71f1"
+      sha256 "9ad43d82a8f2c80e4b013c428cb4f93033af7c57288549718c6dd5350bb3efbb"
     end
     on_intel do
       url "https://github.com/j3ssie/osmedeus/releases/download/v#{version}/osmedeus_#{version}_darwin_amd64.tar.gz"
-      sha256 "ce9eba4ca827fc4d5ae2129e1a96cf0634a6c2d9af580e7f58a3825a7d7b79df"
+      sha256 "3e3f2fbfb8d068de1261f9b1f0a7e81dea53636383ec275c5690fe98e26e4e61"
     end
   end
 
   on_linux do
     on_arm do
       url "https://github.com/j3ssie/osmedeus/releases/download/v#{version}/osmedeus_#{version}_linux_arm64.tar.gz"
-      sha256 "d1e8158356cade661c1d5edc21c5347b810be83c873f5ae86586478f3a9a3866"
+      sha256 "c93d2e4bee2155dc1119ad29d74f3faf94b24afa72e1d5eb692537bb067bad3b"
     end
     on_intel do
       url "https://github.com/j3ssie/osmedeus/releases/download/v#{version}/osmedeus_#{version}_linux_amd64.tar.gz"
-      sha256 "759c1e4b7ebbe746d2a274b2f34808f5dc8cae68c4165b395911866fc453e188"
+      sha256 "e413f2af54d0d45081a454215135cdf0fca062add335b42047459bf5a02c1dc0"
     end
   end
 
