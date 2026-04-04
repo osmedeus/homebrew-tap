@@ -4,28 +4,28 @@
 class Osmedeus < Formula
   desc "A Modern Orchestration Engine for Security"
   homepage "https://github.com/j3ssie/osmedeus"
-  version "5.0.1"
+  version "5.0.2"
   license "MIT"
 
   on_macos do
     on_arm do
       url "https://github.com/j3ssie/osmedeus/releases/download/v#{version}/osmedeus_#{version}_darwin_arm64.tar.gz"
-      sha256 "daa24dc838b3e44ed9dd443218b5ecc9427bbd98984d849a2264c9038ec98e3c"
+      sha256 "65b342d126579a81f492490a5dcabb2657cb85dd18ac3ed997698fedff88f608"
     end
     on_intel do
       url "https://github.com/j3ssie/osmedeus/releases/download/v#{version}/osmedeus_#{version}_darwin_amd64.tar.gz"
-      sha256 "d3b0020ca5549ec888c1a2dfc1f324e2ed23c6e3ed7161e910ef74d3f8e9601b"
+      sha256 "ece2f7f94156ba2d4bc4fc4d11aa83bca2be42fd009b643c00bce4471f9d65c5"
     end
   end
 
   on_linux do
     on_arm do
       url "https://github.com/j3ssie/osmedeus/releases/download/v#{version}/osmedeus_#{version}_linux_arm64.tar.gz"
-      sha256 "4deac22629b0304ac0ef7733df2a16d53a1fa40a9cc42b56e4a80e194a780dae"
+      sha256 "a695c1fc29b0648acff1902302bc25d66421b3655baface6a5bffd346c3c629d"
     end
     on_intel do
       url "https://github.com/j3ssie/osmedeus/releases/download/v#{version}/osmedeus_#{version}_linux_amd64.tar.gz"
-      sha256 "15c58b1792f6aa6fc2b8eee436f74c6c896a21d39120ddc7190e46aeaeb7c756"
+      sha256 "f80d26594d14527b0acdc5c675fbd15d450265669da3a84d2bab766acfe07d4d"
     end
   end
 
